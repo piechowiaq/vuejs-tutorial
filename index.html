@@ -7,19 +7,29 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 <body>
-<nav class="navbar navbar-expand navbar-light bg-light">
-    <a class="navbar-brand" href="#">Navbar</a>
-
-    <div class="collapse navbar-collapse" id="navbarNav">
+<nav
+        class="navbar navbar-expand"
+        :class="{'navbar-light bg-light': !useDarkNavBar, 'navbar-dark bg-dark': useDarkNavBar}"
+>
+    <a class="navbar-brand" href="#">My Vue</a>
+    <div class="collapse navbar-collapse container-fluid" id="navbarNav">
         <ul class="navbar-nav">
             <li v-for="(page, index) in pages" class="nav-item" :key="index">
                 <a class="nav-link"
+                   :class="{active: activePage == index}"
                    :href="page.link.url"
                    :title="`This link goes to the ${page.link.text} page`"
                    @click.prevent="activePage = index"
                 >{{ page.link.text }}</a>
             </li>           
         </ul>
+        <form class="d-flex">
+            <button
+                    class="btn btn-primary"
+                    @click.prevent="useDarkNavBar = !useDarkNavBar">Toggle Navbar
+
+            </button>
+        </form>
     </div>
 </nav>
     <div id="content" class="container">
@@ -32,6 +42,7 @@
             data() {
                 return {
                     activePage: 0,
+                    useDarkNavBar: false,
                     pages: [
                         {
                             link: {text: 'Home', url: 'index.html'},
