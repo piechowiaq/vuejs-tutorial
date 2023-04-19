@@ -7,33 +7,18 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 <body>
-<nav
+    <navbar
+            :page="pages"
+            :activePage="activePage"
+            :navLinkClick="(index) => activePage = index"
+    >
 
-        :class="[`navbar-${theme}`, `bg-${theme}`, 'navbar', 'navbar-expand']"
->
-    <a class="navbar-brand" href="#">My Vue</a>
-    <div class="collapse navbar-collapse container-fluid" id="navbarNav">
-        <ul class="navbar-nav">
-            <li v-for="(page, index) in pages" class="nav-item" :key="index">
-                <a class="nav-link"
-                   :class="{active: activePage == index}"
-                   :href="page.link.url"
-                   :title="`This link goes to the ${page.link.text} page`"
-                   @click.prevent="activePage = index"
-                >{{ page.link.text }}</a>
-            </li>           
-        </ul>
-        <form class="d-flex">
-            <button
-                    class="btn btn-primary"
-                    @click.prevent="changeTheme()"
-            >Toggle Navbar
 
-            </button>
-        </form>
-    </div>
-</nav>
-    <page-viewer page-title="Page Title 2" page-content="Page Content 2"></page-viewer>
+    </navbar>
+
+    <page-viewer
+            :page="pages[activePage]"
+    ></page-viewer>
 
     <script>
 
@@ -41,7 +26,6 @@
             data() {
                 return {
                     activePage: 0,
-                    theme: 'dark',
                     pages: [
                         {
                             link: {text: 'Home', url: 'index.html'},
@@ -61,6 +45,52 @@
                     ],
                 };
             },
+
+        });
+
+        app.component('page-viewer', {
+            props: ['page'],
+            template: `
+            <div class="container">
+                <h1>{{ page.pageTitle }}</h1>
+                <p>{{ page.content }}</p>
+             </div>`
+        })
+
+        app.component('navbar', {
+            props: ['pages', 'activePage', 'navLinkClick'],
+            template: `
+                <nav
+                    :class="[\`navbar-\${theme}\`, \`bg-\${theme}\`, 'navbar', 'navbar-expand']">
+                    <a class="navbar-brand" href="#">My Vue</a>
+                    <div class="collapse navbar-collapse container-fluid" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li v-for="(page, index) in pages" class="nav-item" :key="index">
+                                <a class="nav-link"
+                                   :class="{active: activePage == index}"
+                                   :href="page.link.url"
+                                   :title="\`This link goes to the \${page.link.text} page\`"
+                                   @click.prevent="navLinkClick(index)"
+                                   >{{ page.link.text }}</a>
+                            </li>
+                        </ul>
+                        <form class="d-flex">
+                            <button
+                                    class="btn btn-primary"
+                                    @click.prevent="changeTheme()"
+                            >Toggle Navbar
+
+                            </button>
+                        </form>
+                    </div>
+                </nav>`,
+            data() {
+
+                return {
+                    theme: 'dark',
+
+                }
+            },
             methods: {
                 changeTheme() {
                     let theme = 'dark';
@@ -72,16 +102,6 @@
                     this.theme = theme;
                 }
             }
-        });
-
-        app.component('page-viewer', {
-
-            props: ['pageTitle', 'pageContent'],
-            template: `
-            <div class="container">
-                <h1>{{ pageTitle }}</h1>
-                <p>{{ pageContent }}</p>
-             </div>`
         })
 
         app.mount('body');
