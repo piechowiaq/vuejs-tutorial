@@ -26,19 +26,18 @@
         <form class="d-flex">
             <button
                     class="btn btn-primary"
-                    @click.prevent="theme = theme == 'light' ? 'dark' : 'light'">Toggle Navbar
+                    @click.prevent="changeTheme()"
+            >Toggle Navbar
 
             </button>
         </form>
     </div>
 </nav>
-    <div id="content" class="container">
-        <h1>{{ pages[activePage].pageTitle }}</h1>
-        <p>{{ pages[activePage].content }}</p>
-    </div>
+    <page-viewer page-title="Page Title 2" page-content="Page Content 2"></page-viewer>
 
     <script>
-        Vue.createApp({
+
+        let app = Vue.createApp({
             data() {
                 return {
                     activePage: 0,
@@ -61,8 +60,32 @@
                         }
                     ],
                 };
+            },
+            methods: {
+                changeTheme() {
+                    let theme = 'dark';
+
+                    if(this.theme ==='dark'){
+                        theme = 'light'
+                    }
+
+                    this.theme = theme;
+                }
             }
-        }).mount('body');
+        });
+
+        app.component('page-viewer', {
+
+            props: ['pageTitle', 'pageContent'],
+            template: `
+            <div class="container">
+                <h1>{{ pageTitle }}</h1>
+                <p>{{ pageContent }}</p>
+             </div>`
+        })
+
+        app.mount('body');
+
     </script>
 </body>
 </html>
